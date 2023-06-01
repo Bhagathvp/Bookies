@@ -73,7 +73,7 @@ const getNewArrival = (req,res)=>{
             password: spassword,
             is_admin: 0,
         });
-        mob="+91"+mobile;
+        mob="+91"+ req.body.mno;
         console.log(user);
         newOtp = sms.sendMessage(mob);
         console.log(newOtp);
@@ -247,14 +247,17 @@ const againOtp = async (req, res) => {
 }
 
 const verifyOtp = async (req, res) => {
-
+    const uid =req.session.user_id
+    
+    const product = await products.find({ isAvailable: 1 });
+    const banners = await banner.findOne({ is_active: 1 });
   try { 
     
       if (req.body.sendotp == req.body.otp) {
           const userData = await user.save();
           console.log(userData);
           if (userData) {
-              res.render('users/index', { user: req.session.user, message: "registered successfully" })
+              res.render('users/index', { user: req.session.user, message: "registered successfully" ,product:product, banner:banners, id:uid})
           }
           else {
               res.render('users/signUp', { user: req.session.user, message: "registration failed!!" })
